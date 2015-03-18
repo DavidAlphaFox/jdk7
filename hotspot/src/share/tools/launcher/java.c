@@ -223,6 +223,7 @@ struct JavaMainArgs {
 /*
  * Entry point.
  */
+//Java的launcher的启动点
 int
 main(int argc, char ** argv)
 {
@@ -279,7 +280,7 @@ main(int argc, char ** argv)
 
     ifn.CreateJavaVM = 0;
     ifn.GetDefaultJavaVMInitArgs = 0;
-
+//尝试加载Java的JVM
     if (_launcher_debug)
       start = CounterGet();
     if (!LoadJavaVM(jvmpath, &ifn)) {

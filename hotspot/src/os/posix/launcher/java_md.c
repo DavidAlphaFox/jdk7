@@ -701,7 +701,7 @@ GetJREPath(char *path, jint pathsize, char * arch, jboolean speculative)
       printf("JRE path is %s\n", path);
     return JNI_TRUE;
 }
-
+//加载Java环境
 jboolean
 LoadJavaVM(const char *jvmpath, InvocationFunctions *ifn)
 {
@@ -711,13 +711,13 @@ LoadJavaVM(const char *jvmpath, InvocationFunctions *ifn)
     ifn->GetDefaultJavaVMInitArgs = JNI_GetDefaultJavaVMInitArgs;
     return JNI_TRUE;
 #else
-   Dl_info dlinfo;
+	Dl_info dlinfo;
     void *libjvm;
 
     if (_launcher_debug) {
         printf("JVM path is %s\n", jvmpath);
     }
-
+//加载so文件
     libjvm = dlopen(jvmpath, RTLD_NOW + RTLD_GLOBAL);
     if (libjvm == NULL) {
 #if defined(__sparc) && !defined(_LP64) /* i.e. 32-bit sparc */
