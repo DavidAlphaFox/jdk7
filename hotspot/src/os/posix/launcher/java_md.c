@@ -766,7 +766,7 @@ LoadJavaVM(const char *jvmpath, InvocationFunctions *ifn)
       fprintf(stderr, "dl failure on line %d", __LINE__);
       goto error;
     }
-
+//获得JNI_CreateJavaVM函数
     ifn->CreateJavaVM = (CreateJavaVM_t)
       dlsym(libjvm, "JNI_CreateJavaVM");
     if (ifn->CreateJavaVM == NULL)
@@ -1830,9 +1830,10 @@ ContinueInNewThread(int (JNICALL *continuation)(void *), jlong stack_size, void 
     if (stack_size > 0) {
       pthread_attr_setstacksize(&attr, stack_size);
     }
-
+//创建新线程
     if (pthread_create(&tid, &attr, (void *(*)(void*))continuation, (void*)args) == 0) {
       void * tmp;
+//pthread_join会死等的
       pthread_join(tid, &tmp);
       rslt = (int)(intptr_t)tmp;
     } else {
@@ -1842,6 +1843,7 @@ ContinueInNewThread(int (JNICALL *continuation)(void *), jlong stack_size, void 
       * later in continuation as JNI_CreateJavaVM needs to create quite a
       * few new threads, anyway, just give it a try..
       */
+//直接在当前线程中执行
       rslt = continuation(args);
     }
 

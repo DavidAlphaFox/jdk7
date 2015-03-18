@@ -76,7 +76,7 @@ void stubRoutines_init2(); // note: StubRoutines need 2-phase init
 // during VM shutdown
 void perfMemory_exit();
 void ostream_exit();
-
+//初始化全局的JavaVM
 void vm_init_globals() {
   check_ThreadShadow();
   basic_types_init();

@@ -386,11 +386,11 @@ main(int argc, char ** argv)
       args.jarfile = jarfile;
       args.classname = classname;
       args.ifn = ifn;
-
+//创建一个新线程来处理Java初始化
       return ContinueInNewThread(JavaMain, threadStackSize, (void*)&args);
     }
 }
-
+//真正执行初始化的地方
 int JNICALL
 JavaMain(void * _args)
 {
@@ -421,6 +421,7 @@ JavaMain(void * _args)
 
     if (_launcher_debug)
         start = CounterGet();
+//创建Java的VM
     if (!InitializeJVM(&vm, &env, &ifn)) {
         ReportErrorMessage("Could not create the Java virtual machine.",
                            JNI_TRUE);
@@ -492,6 +493,7 @@ JavaMain(void * _args)
      *     2)   Remove the vestages of maintaining main_class through
      *          the environment (and remove these comments).
      */
+//获取Jar文件的MainClass
     if (jarfile != 0) {
         mainClassName = GetMainClassName(env, jarfile);
         if ((*env)->ExceptionOccurred(env)) {
@@ -512,6 +514,7 @@ JavaMain(void * _args)
             ReportExceptionDescription(env);
             goto leave;
         }
+//加载MainClass
         mainClass = LoadClass(env, classname);
         if(mainClass == NULL) { /* exception occured */
             const char * format = "Could not find the main class: %s. Program will exit.";
@@ -550,7 +553,7 @@ JavaMain(void * _args)
       }
       (*env)->ReleaseStringUTFChars(env, mainClassName, classname);
     }
-
+//获取Main方法所在的地方
     /* Get the application's main method */
     mainID = (*env)->GetStaticMethodID(env, mainClass, "main",
                                        "([Ljava/lang/String;)V");
@@ -598,7 +601,7 @@ JavaMain(void * _args)
         ReportExceptionDescription(env);
         goto leave;
     }
-
+//开始调用Main方法
     /* Invoke main method. */
     (*env)->CallStaticVoidMethod(env, mainClass, mainID, mainArgs);
 
@@ -633,8 +636,9 @@ JavaMain(void * _args)
      * the same C thread.  This allows mainThread.join() and
      * mainThread.isAlive() to work as expected.
      */
+//VM进入等待状态
     (*vm)->DestroyJavaVM(vm);
-
+//当所有的非daemon线程结束了，VM才会整整的结束
     if(message != NULL && !noExitErrorMessage)
       ReportErrorMessage(message, messageDest);
     return ret;
@@ -1262,6 +1266,7 @@ ParseArguments(int *pargc, char ***pargv, char **pjarfile,
  * Initializes the Java Virtual Machine. Also frees options array when
  * finished.
  */
+//创建Java的VM数据结构，并将返回值放入pvm中
 static jboolean
 InitializeJVM(JavaVM **pvm, JNIEnv **penv, InvocationFunctions *ifn)
 {
@@ -1285,7 +1290,7 @@ InitializeJVM(JavaVM **pvm, JNIEnv **penv, InvocationFunctions *ifn)
             printf("    option[%2d] = '%s'\n",
                    i, args.options[i].optionString);
     }
-
+//调用JNI_CreateJavaVM来创建VM结构体
     r = ifn->CreateJavaVM(pvm, (void **)penv, &args);
     JLI_MemFree(options);
     return r == JNI_OK;

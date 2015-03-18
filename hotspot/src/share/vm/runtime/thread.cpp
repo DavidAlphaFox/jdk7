@@ -3003,7 +3003,7 @@ void Threads::threads_do(ThreadClosure* tc) {
 
   // If CompilerThreads ever become non-JavaThreads, add them here
 }
-
+//通过参数创建JavaVM数据结构
 jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
 
   extern void JDK_Version_init();
@@ -3016,7 +3016,7 @@ jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
 
   // Process java launcher properties.
   Arguments::process_sun_java_launcher_properties(args);
-
+//初始化OS模块
   // Initialize the os module before using TLS
   os::init();
 
@@ -3074,7 +3074,7 @@ jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
 
   // Initialize global data structures and create system classes in heap
   vm_init_globals();
-
+//创建Java内部的主线程
   // Attach the main thread to this os thread
   JavaThread* main_thread = new JavaThread();
   main_thread->set_thread_state(_thread_in_vm);

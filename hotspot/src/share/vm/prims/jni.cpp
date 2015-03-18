@@ -3298,7 +3298,7 @@ _JNI_IMPORT_OR_EXPORT_ jint JNICALL JNI_GetDefaultJavaVMInitArgs(void *args_) {
 
 HS_DTRACE_PROBE_DECL3(hotspot_jni, CreateJavaVM__entry, vm, penv, args);
 DT_RETURN_MARK_DECL(CreateJavaVM, jint);
-
+//创建Java的VM结构体
 _JNI_IMPORT_OR_EXPORT_ jint JNICALL JNI_CreateJavaVM(JavaVM **vm, void **penv, void *args) {
   HS_DTRACE_PROBE3(hotspot_jni, CreateJavaVM__entry, vm, penv, args);
 
@@ -3332,9 +3332,11 @@ _JNI_IMPORT_OR_EXPORT_ jint JNICALL JNI_CreateJavaVM(JavaVM **vm, void **penv, v
   // on a multiprocessor, and at this stage of initialization the os::is_MP
   // function used to determine this will always return false. Atomic::xchg
   // does not have this problem.
+//检查VM是不是已经创建了
   if (Atomic::xchg(1, &vm_created) == 1) {
     return JNI_ERR;   // already created, or create attempt in progress
   }
+//再次进行检查
   if (Atomic::xchg(0, &safe_to_recreate_vm) == 0) {
     return JNI_ERR;  // someone tried and failed and retry not allowed.
   }
@@ -3352,12 +3354,16 @@ _JNI_IMPORT_OR_EXPORT_ jint JNICALL JNI_CreateJavaVM(JavaVM **vm, void **penv, v
    * JNI_CreateJavaVM will immediately fail using the above logic.
    */
   bool can_try_again = true;
-
+//创建VM
   result = Threads::create_vm((JavaVMInitArgs*) args, &can_try_again);
+//创建成功了
   if (result == JNI_OK) {
+//得到Java的线程
     JavaThread *thread = JavaThread::current();
     /* thread is thread_in_vm here */
+//得到main_vm
     *vm = (JavaVM *)(&main_vm);
+//得到全局环境
     *(JNIEnv**)penv = thread->jni_environment();
 
     // Tracks the time application was running before GC

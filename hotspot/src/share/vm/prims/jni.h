@@ -1902,7 +1902,7 @@ struct JNIInvokeInterface_ {
 
     jint (JNICALL *AttachCurrentThreadAsDaemon)(JavaVM *vm, void **penv, void *args);
 };
-
+//JavaVM中所有的函数
 struct JavaVM_ {
     const struct JNIInvokeInterface_ *functions;
 #ifdef __cplusplus
