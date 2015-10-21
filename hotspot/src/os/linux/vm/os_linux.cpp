@@ -3762,7 +3762,8 @@ void os::Linux::set_signal_handler(int sig, bool set_installed) {
   // Save flags, which are set by ours
   assert(sig > 0 && sig < MAXSIGNUM, "vm signal out of expected range");
   sigflags[sig] = sigAct.sa_flags;
-
+//使用sigaction是因为这个是有明确的多线程定义
+//在handler中必须使用可重入的函数
   int ret = sigaction(sig, &sigAct, &oldAct);
   assert(ret == 0, "check");
 
@@ -3774,7 +3775,7 @@ void os::Linux::set_signal_handler(int sig, bool set_installed) {
 
 // install signal handlers for signals that HotSpot needs to
 // handle in order to support Java-level exception handling.
-
+// 为hotspot安装信号处理的handler
 void os::Linux::install_signal_handlers() {
   if (!signal_handlers_are_installed) {
     signal_handlers_are_installed = true;

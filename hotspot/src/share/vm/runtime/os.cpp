@@ -1167,6 +1167,9 @@ void os::block_on_serialize_page_trap() {
   // Generally, it is unsafe to manipulate locks in signal handlers, but in
   // this case, it's OK as the signal is synchronous and we know precisely when
   // it can occur.
+  // 等待VMThread释放页面序列化锁
+  // 这也说明VMThread中的操作已经完成了，可以让JavaThread恢复执行
+  
   Thread::muxAcquire(&SerializePageLock, "set_memory_serialize_page");
   Thread::muxRelease(&SerializePageLock);
 }
