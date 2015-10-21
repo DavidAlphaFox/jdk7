@@ -1307,6 +1307,7 @@ void JavaThread::initialize() {
   }
 
   // Setup safepoint state info for this thread
+  //会为当前线程创建一个Safepoint的状态
   ThreadSafepointState::create(this);
 
   debug_only(_java_call_counter = 0);
@@ -1451,6 +1452,7 @@ JavaThread::~JavaThread() {
 // The first routine called by a new Java thread
 void JavaThread::run() {
   // initialize thread-local alloc buffer related fields
+  // 初始化线程的，线程特有数据
   this->initialize_tlab();
 
   // used to test validitity of stack trace backs
@@ -1490,7 +1492,7 @@ void JavaThread::run() {
   // Note, thread is no longer valid at this point!
 }
 
-
+// Java线程入口
 void JavaThread::thread_main_inner() {
   assert(JavaThread::current() == this, "sanity check");
   assert(this->threadObj() != NULL, "just checking");
@@ -1498,6 +1500,7 @@ void JavaThread::thread_main_inner() {
   // Execute thread entry point unless this thread has a pending exception
   // or has been stopped before starting.
   // Note: Due to JVM_StopThread we can have pending exceptions already!
+  // 这里面的entry_point应当是Java类的一个启动指令
   if (!this->has_pending_exception() &&
       !java_lang_Thread::is_stillborn(this->threadObj())) {
     HandleMark hm(this);
@@ -2949,7 +2952,7 @@ CompilerThread::CompilerThread(CompileQueue* queue, CompilerCounters* counters)
   _ideal_graph_printer = NULL;
 #endif
 }
-
+// 执行Java的Opcode代码
 void CompilerThread::oops_do(OopClosure* f, CodeBlobClosure* cf) {
   JavaThread::oops_do(f, cf);
   if (_scanned_nmethod != NULL && cf != NULL) {

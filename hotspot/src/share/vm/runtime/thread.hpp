@@ -630,6 +630,7 @@ inline Thread* Thread::current() {
 
 // Name support for threads.  non-JavaThread subclasses with multiple
 // uniquely named instances should derive from this.
+// 命名线程,非Java的线程都应当由此继承
 class NamedThread: public Thread {
   friend class VMStructs;
   enum {
@@ -669,6 +670,7 @@ public:
 };
 
 // A single WatcherThread is used for simulating timer interrupts.
+// 模拟时钟中断
 class WatcherThread: public Thread {
   friend class VMStructs;
  public:
@@ -706,7 +708,7 @@ class WatcherThread: public Thread {
 class CompilerThread;
 
 typedef void (*ThreadFunction)(JavaThread*, TRAPS);
-
+// Java的线程，我们用Java代码创建的线程
 class JavaThread: public Thread {
   friend class VMStructs;
  private:
@@ -1687,6 +1689,8 @@ inline size_t JavaThread::stack_available(address cur_sp) {
 }
 
 // A thread used for Compilation.
+// 将Java的OpCode编译成JIT的代码
+// 它本身是Java线程的一个子类
 class CompilerThread : public JavaThread {
   friend class VMStructs;
  private:
