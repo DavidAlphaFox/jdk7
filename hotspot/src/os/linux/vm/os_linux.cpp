@@ -574,7 +574,7 @@ sigset_t* os::Linux::allowdebug_blocked_signals() {
   assert(signal_sets_initialized, "Not initialized");
   return &allowdebug_blocked_sigs;
 }
-
+//给当前线程设置信号
 void os::Linux::hotspot_sigmask(Thread* thread) {
 
   //Save caller's signal mask before setting VM signal mask
@@ -2796,7 +2796,8 @@ bool os::release_memory(char* addr, size_t size) {
 static address highest_vm_reserved_address() {
   return _highest_vm_reserved_address;
 }
-
+// 对齐页面
+// 并添加页面保护
 static bool linux_mprotect(char* addr, size_t size, int prot) {
   // Linux wants the mprotect address argument to be page aligned.
   char* bottom = (char*)align_size_down((intptr_t)addr, os::Linux::page_size());

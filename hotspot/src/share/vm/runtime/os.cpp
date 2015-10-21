@@ -1156,6 +1156,7 @@ static volatile intptr_t SerializePageLock = 0;
 // This method is called from signal handler when SIGSEGV occurs while the current
 // thread tries to store to the "read-only" memory serialize page during state
 // transition.
+// 当页面不可读取的时候SIGSEGV会触发
 void os::block_on_serialize_page_trap() {
   if (TraceSafepoint) {
     tty->print_cr("Block until the serialize page permission restored");

@@ -98,6 +98,7 @@ static volatile int TryingToBlock = 0 ;    // proximate value -- for advisory us
 static bool timeout_error_printed = false;
 
 // Roll all threads forward to a safepoint and suspend them all
+// 将所有线程都执行到safepoint
 void SafepointSynchronize::begin() {
 
   Thread* myThread = Thread::current();
@@ -107,7 +108,8 @@ void SafepointSynchronize::begin() {
     _safepoint_begin_time = os::javaTimeNanos();
     _ts_of_current_safepoint = tty->time_stamp().seconds();
   }
-
+//如果不是序列化GC
+//需要考虑是CMS的还是G1的
 #ifndef SERIALGC
   if (UseConcMarkSweepGC) {
     // In the future we should investigate whether CMS can use the
@@ -120,6 +122,7 @@ void SafepointSynchronize::begin() {
 
   // By getting the Threads_lock, we assure that no threads are about to start or
   // exit. It is released again in SafepointSynchronize::end().
+  // 锁住线程列表，这样就不会有线程的增加或减少
   Threads_lock->lock();
 
   assert( _state == _not_synchronized, "trying to safepoint synchronize with wrong state");
@@ -204,6 +207,7 @@ void SafepointSynchronize::begin() {
     // Make polling safepoint aware
     guarantee (PageArmed == 0, "invariant") ;
     PageArmed = 1 ;
+	// 让特定页面不能读取了
     os::make_polling_page_unreadable();
   }
 
@@ -335,6 +339,7 @@ void SafepointSynchronize::begin() {
   }
 
   // wait until all threads are stopped
+  // 需要等到所有的线程全都停止先来，才算结束
   while (_waiting_to_block > 0) {
     if (TraceSafepoint) tty->print_cr("Waiting for %d thread(s) to block", _waiting_to_block);
     if (!SafepointTimeout || timeout_error_printed) {
@@ -717,7 +722,7 @@ static void print_me(intptr_t *new_sp, intptr_t *old_sp, bool *was_oops) {
 #endif  // SPARC
 #endif  // PRODUCT
 
-
+//处理polling page的异常
 void SafepointSynchronize::handle_polling_page_exception(JavaThread *thread) {
   assert(thread->is_Java_thread(), "polling reference encountered by VM thread");
   assert(thread->thread_state() == _thread_in_Java, "should come from Java code");
@@ -942,12 +947,13 @@ void ThreadSafepointState::handle_polling_page_exception() {
   if (ShowSafepointMsgs && Verbose) {
     tty->print_cr("Polling page exception at " INTPTR_FORMAT, thread()->saved_exception_pc());
   }
+  //找到当前方法，并保存返回地址
   address real_return_addr = thread()->saved_exception_pc();
 
   CodeBlob *cb = CodeCache::find_blob(real_return_addr);
   assert(cb != NULL && cb->is_nmethod(), "return address should be in nmethod");
   nmethod* nm = (nmethod*)cb;
-
+//找到调用堆栈
   // Find frame of caller
   frame stub_fr = thread()->last_frame();
   CodeBlob* stub_cb = stub_fr.cb();

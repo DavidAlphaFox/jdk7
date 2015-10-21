@@ -83,7 +83,7 @@ class ParkEvent ;
 
 // The default length of monitor name is chosen to be 64 to avoid false sharing.
 static const int MONITOR_NAME_LEN = 64;
-
+// Monitor是一种锁，也是一种堆对象
 class Monitor : public CHeapObj {
 
  public:

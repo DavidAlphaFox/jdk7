@@ -221,7 +221,8 @@ void VMThread::create() {
   // Create VM operation queue
   _vm_queue = new VMOperationQueue();
   guarantee(_vm_queue != NULL, "just checking");
-
+// Java的monitor
+// 用来监控java线程的退出？
   _terminate_lock = new Monitor(Mutex::safepoint, "VMThread::_terminate_lock", true);
 
   if (UsePerfData) {
@@ -378,7 +379,7 @@ void VMThread::evaluate_operation(VM_Operation* op) {
   }
 }
 
-
+// 虚拟机线程主循环
 void VMThread::loop() {
   assert(_cur_vm_operation == NULL, "no current one should be executing");
 
