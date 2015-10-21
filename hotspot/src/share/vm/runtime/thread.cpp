@@ -1390,6 +1390,7 @@ JavaThread::JavaThread(ThreadFunction entry_point, size_t stack_sz) :
   }
   initialize();
   _is_attaching = false;
+  //Java代码中的一个函数
   set_entry_point(entry_point);
   // Create the native thread itself.
   // %note runtime_23
