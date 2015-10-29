@@ -113,7 +113,7 @@ iepoll(int epfd, struct epoll_event *events, int numfds, jlong timeout)
         }
     }
 }
-
+//动态加载的so文件
 JNIEXPORT void JNICALL
 Java_sun_nio_ch_EPollArrayWrapper_init(JNIEnv *env, jclass this)
 {
@@ -189,7 +189,7 @@ Java_sun_nio_ch_EPollArrayWrapper_epollCtl(JNIEnv *env, jobject this, jint epfd,
         JNU_ThrowIOExceptionWithLastError(env, "epoll_ctl failed");
     }
 }
-
+//Java层面的代码的epollWait是直接调用这个native的
 JNIEXPORT jint JNICALL
 Java_sun_nio_ch_EPollArrayWrapper_epollWait(JNIEnv *env, jobject this,
                                             jlong address, jint numfds,
