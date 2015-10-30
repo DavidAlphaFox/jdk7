@@ -79,7 +79,7 @@ Java_sun_nio_ch_IOUtil_configureBlocking(JNIEnv *env, jclass clazz,
     if (configureBlocking(fdval(env, fdo), blocking) < 0)
         JNU_ThrowIOExceptionWithLastError(env, "Configure blocking failed");
 }
-
+// 直接建立pipe
 JNIEXPORT jlong JNICALL
 Java_sun_nio_ch_IOUtil_makePipe(JNIEnv *env, jobject this, jboolean blocking)
 {

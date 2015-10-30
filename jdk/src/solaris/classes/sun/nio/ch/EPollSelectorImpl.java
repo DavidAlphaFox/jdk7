@@ -60,6 +60,7 @@ class EPollSelectorImpl
      * Package private constructor called by factory method in
      * the abstract superclass Selector.
      */
+	 //使用pipe来创建唤醒的socket
     EPollSelectorImpl(SelectorProvider sp) {
         super(sp);
         long pipeFds = IOUtil.makePipe(false);
@@ -186,7 +187,7 @@ class EPollSelectorImpl
             throw new ClosedSelectorException();
         pollWrapper.setInterest(sk.channel, ops);
     }
-
+//sun 选择的打断selector的方式
     public Selector wakeup() {
         synchronized (interruptLock) {
             if (!interruptTriggered) {

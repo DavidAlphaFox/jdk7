@@ -126,7 +126,7 @@ Java_sun_nio_ch_EPollArrayWrapper_init(JNIEnv *env, jclass this)
         JNU_ThrowInternalError(env, "unable to get address of epoll functions, pre-2.6 kernel?");
     }
 }
-
+//创建epoll
 JNIEXPORT jint JNICALL
 Java_sun_nio_ch_EPollArrayWrapper_epollCreate(JNIEnv *env, jobject this)
 {
@@ -209,7 +209,7 @@ Java_sun_nio_ch_EPollArrayWrapper_epollWait(JNIEnv *env, jobject this,
     }
     return res;
 }
-
+// JVM中实现的epoll打断函数
 JNIEXPORT void JNICALL
 Java_sun_nio_ch_EPollArrayWrapper_interrupt(JNIEnv *env, jobject this, jint fd)
 {
