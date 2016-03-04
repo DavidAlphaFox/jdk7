@@ -667,6 +667,8 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
      * @param k the index
      * @return the segment
      */
+    // 确保某个segment的空间
+    // 使用hash数组
     @SuppressWarnings("unchecked")
     private Segment<K,V> ensureSegment(int k) {
         final Segment<K,V>[] ss = this.segments;
@@ -1076,6 +1078,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V>
         Segment<K,V> s;
         if (value == null)
             throw new NullPointerException();
+        //先计算key的hash值
         int hash = hash(key.hashCode());
         int j = (hash >>> segmentShift) & segmentMask;
         if ((s = (Segment<K,V>)UNSAFE.getObject
